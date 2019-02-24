@@ -24,30 +24,23 @@ namespace HdProduction.BuildService.Services
     public string BuildApp(int buildConfiguration)
     {
       var appBuildName = ProjectPrefix + buildConfiguration;
+      var buildKey = $"{appBuildName}_{DateTime.UtcNow.ToFileTimeUtc()}";
       var pathToProject = Path.Combine(_sourcesPath, $"{appBuildName}/{appBuildName}.csproj");
-      var outputPath = Path.Combine(_sourcesPath, $"AppBuilds/{appBuildName}");
+      var outputPath = Path.Combine(_sourcesPath, buildKey);
       var zippedBuild = outputPath + ".zip";
 
-      using (new AppBuildLocker(buildConfiguration))
+      if (!File.Exists(pathToProject))
       {
-        if (File.Exists(zippedBuild))
-        {
-          return zippedBuild;
-        }
-
-        if (!File.Exists(pathToProject))
-        {
-          throw new ApplicationException("Selected build configuration is not supported");
-        }
-
-        Process.Start("dotnet", $"publish {pathToProject} -c Release -o {outputPath}")
-          ?.WaitForExit();
-
-        ZipFile.CreateFromDirectory(outputPath, zippedBuild);
-        Directory.Delete(outputPath, true);
-
-        return zippedBuild;
+        throw new ApplicationException("Selected build configuration is not supported");
       }
+
+      Process.Start("dotnet", $"publish {pathToProject} -c Release -o {outputPath}")
+        ?.WaitForExit();
+
+      ZipFile.CreateFromDirectory(outputPath, zippedBuild);
+      Directory.Delete(outputPath, true);
+
+      return zippedBuild;
     }
   }
 }
