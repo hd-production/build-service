@@ -13,3 +13,4 @@ DROP TABLE IF EXISTS sources_update;
 CREATE TABLE sources_update(
   date TIMESTAMP
 );
+INSERT INTO sources_update VALUES (NOW());

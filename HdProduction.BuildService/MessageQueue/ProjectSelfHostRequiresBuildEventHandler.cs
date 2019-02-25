@@ -9,7 +9,7 @@ using log4net;
 
 namespace HdProduction.BuildService.MessageQueue
 {
-    public class ProjectRequiresSelfHostBuildEventHandler : IEventHandler<ProjectRequiresSelfHostBuildEvent>
+    public class ProjectRequiresSelfHostBuildEventHandler : IEventHandler<ProjectRequiresSelfHostBuildingEvent>
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -30,7 +30,7 @@ namespace HdProduction.BuildService.MessageQueue
             _contentServiceClient = contentServiceClient;
         }
 
-        public async Task HandleAsync(ProjectRequiresSelfHostBuildEvent ev)
+        public async Task HandleAsync(ProjectRequiresSelfHostBuildingEvent ev)
         {
             try
             {

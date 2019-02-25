@@ -1,4 +1,7 @@
-﻿using HdProduction.BuildService.Services;
+﻿using HdProduction.App.Common;
+using HdProduction.BuildService.MessageQueue;
+using HdProduction.BuildService.MessageQueue.Events;
+using HdProduction.BuildService.Services;
 using HdProduction.Npgsql.Orm;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,6 +25,7 @@ namespace HdProduction.BuildService
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddMemoryCache();
+      services.AddMessageQueue<ProjectRequiresSelfHostBuildEventHandler>(Configuration.GetSection(""));
       services.AddSingleton<IDatabaseConnector>(new DatabaseConnector(Configuration.GetConnectionString("Db")));
       services.AddScoped<IHelpdeskBuildService, HelpdeskBuildService>(
         c => new HelpdeskBuildService(Configuration.GetValue<string>("Uris:HelpdeskHostSources")));
@@ -38,6 +42,10 @@ namespace HdProduction.BuildService
       {
         app.UseDeveloperExceptionPage();
       }
+
+      app.SetEventConsumer()
+        .Subscribe<ProjectRequiresSelfHostBuildingEvent>()
+        .StartConsuming();
 
       app.Run(async context =>
       {
