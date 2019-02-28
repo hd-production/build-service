@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace HdProduction.BuildService.Services
@@ -46,7 +47,7 @@ namespace HdProduction.BuildService.Services
 
         public string GetDownloadLink(string fileKey)
         {
-            return Path.Combine(_contentServiceUrl, fileKey);
+            return $"{_contentServiceUrl}/{fileKey}";
         }
     }
 }

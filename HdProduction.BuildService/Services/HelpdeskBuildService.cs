@@ -2,13 +2,14 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using HdProduction.BuildService.Models;
 using HdProduction.BuildService.Synchronization;
 
 namespace HdProduction.BuildService.Services
 {
   public interface IHelpdeskBuildService
   {
-    string BuildApp(int buildConfiguration);
+    string BuildApp(SelfHostBuildConfiguration buildConfiguration);
   }
 
   public class HelpdeskBuildService : IHelpdeskBuildService
@@ -21,7 +22,7 @@ namespace HdProduction.BuildService.Services
       _sourcesPath = sourcesPath;
     }
 
-    public string BuildApp(int buildConfiguration)
+    public string BuildApp(SelfHostBuildConfiguration buildConfiguration)
     {
       var appBuildName = ProjectPrefix + buildConfiguration;
       var buildKey = $"{appBuildName}_{DateTime.UtcNow.ToFileTimeUtc()}";
