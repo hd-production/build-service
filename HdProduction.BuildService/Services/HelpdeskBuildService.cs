@@ -1,9 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using HdProduction.BuildService.Models;
-using HdProduction.BuildService.Synchronization;
 
 namespace HdProduction.BuildService.Services
 {
@@ -14,7 +14,16 @@ namespace HdProduction.BuildService.Services
 
   public class HelpdeskBuildService : IHelpdeskBuildService
   {
-    private const string ProjectPrefix = "ConfigTool.App.";
+    private const string ProjectPrefix = "HelpDesk.App.";
+
+    private static readonly Dictionary<SelfHostBuildConfiguration, string> AppBuildNames = new Dictionary<SelfHostBuildConfiguration, string>
+    {
+      [SelfHostBuildConfiguration.MySql] = "MySql",
+      [SelfHostBuildConfiguration.PostgresSql] = "PostgresSql",
+      [SelfHostBuildConfiguration.SqlServer] = "SqlServer",
+      [SelfHostBuildConfiguration.Sqlite] = "Sqlite",
+    };
+
     private readonly string _sourcesPath;
 
     public HelpdeskBuildService(string sourcesPath)
@@ -24,7 +33,7 @@ namespace HdProduction.BuildService.Services
 
     public string BuildApp(SelfHostBuildConfiguration buildConfiguration)
     {
-      var appBuildName = ProjectPrefix + buildConfiguration;
+      var appBuildName = ProjectPrefix + AppBuildNames[buildConfiguration];
       var buildKey = $"{appBuildName}_{DateTime.UtcNow.ToFileTimeUtc()}";
       var pathToProject = Path.Combine(_sourcesPath, $"{appBuildName}/{appBuildName}.csproj");
       var outputPath = Path.Combine(_sourcesPath, buildKey);
