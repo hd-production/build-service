@@ -39,6 +39,7 @@ namespace HdProduction.BuildService
 
       AddMessageQueue(services, Configuration.GetSection("MessageQueue"));
     }
+    
     private static void AddMessageQueue(IServiceCollection services, IConfigurationSection mqConfigurationSection)
     {
       if (mqConfigurationSection.GetValue<bool>("Enabled"))
