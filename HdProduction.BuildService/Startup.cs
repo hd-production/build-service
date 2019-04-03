@@ -22,7 +22,7 @@ namespace HdProduction.BuildService
     {
       Configuration = configuration;
     }
-    
+
     // This method gets called by the runtime. Use this method to add services to the container.
     // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
     public void ConfigureServices(IServiceCollection services)
@@ -36,7 +36,7 @@ namespace HdProduction.BuildService
         c => new ContentServiceClient(Configuration.GetValue<string>("Uris:ContentStorage")));
       services.AddScoped<ISourcesUpdateRepository, SourcesUpdateRepository>();
       services.AddScoped<IBuildsRepository, BuildsRepository>();
-      
+
       AddMessageQueue(services, Configuration.GetSection("MessageQueue"));
     }
     private static void AddMessageQueue(IServiceCollection services, IConfigurationSection mqConfigurationSection)
@@ -66,7 +66,7 @@ namespace HdProduction.BuildService
         app.UseDeveloperExceptionPage();
       }
 
-      app.SetMessageConsumer()
+      app.ResolveService<IRabbitMqConsumer>()
         .Subscribe<RequiresSelfHostBuildingMessage>()
         .StartConsuming();
 
