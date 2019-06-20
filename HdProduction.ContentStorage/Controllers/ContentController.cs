@@ -42,11 +42,11 @@ namespace HdProduction.ContentStorage.Controllers
       if (!SupportedExtensions.Contains(Path.GetExtension(fileName)))
       {
         return BadRequest("Unsupported file format");
-      }
-      using (var fileStream = new FileStream(Path.Combine(BasePath, fileName), FileMode.Create))
-      {
-        await file.CopyToAsync(fileStream);
-      }
+      }      using (var fileStream = new FileStream(Path.Combine(BasePath, fileName), FileMode.Create))
+             {
+               await file.CopyToAsync(fileStream);
+             }
+
 
       return Ok(fileName);
     }
