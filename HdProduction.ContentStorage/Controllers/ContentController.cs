@@ -10,7 +10,7 @@ namespace HdProduction.ContentStorage.Controllers
   [Route("")]
   public class ContentController : ControllerBase
   {
-    private static readonly string[] SupportedExtensions = {".zip"};
+    private static readonly string[] SupportedExtensions = {".zip", ".jpg", ".png"};
     private static readonly string BasePath = Path.Combine(Directory.GetCurrentDirectory(), "cnt");
 
     static ContentController()
@@ -27,7 +27,7 @@ namespace HdProduction.ContentStorage.Controllers
       try
       {
         var fileStream = System.IO.File.OpenRead(Path.Combine(BasePath, fileKey));
-        return File(fileStream, "application/zip", fileKey);
+        return File(fileStream, GetContentType(fileKey), fileKey);
       }
       catch (FileNotFoundException)
       {
@@ -42,13 +42,26 @@ namespace HdProduction.ContentStorage.Controllers
       if (!SupportedExtensions.Contains(Path.GetExtension(fileName)))
       {
         return BadRequest("Unsupported file format");
-      }
-      using (var fileStream = new FileStream(Path.Combine(BasePath, fileName), FileMode.Create))
-      {
-        await file.CopyToAsync(fileStream);
-      }
+      }      using (var fileStream = new FileStream(Path.Combine(BasePath, fileName), FileMode.Create))
+             {
+               await file.CopyToAsync(fileStream);
+             }
+
 
       return Ok(fileName);
+    }
+
+    private static string GetContentType(string fileKey)
+    {
+      switch (Path.GetExtension(fileKey))
+      {
+        case ".zip":
+          return "application/zip";
+        case ".jpg":
+          return "application/jpeg";
+        default:
+          return "application/octet-stream";
+      }
     }
   }
 }
